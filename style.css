@@ -25,7 +25,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── Outer black canvas: fills the actual browser window ── */
+/* ── True black outer canvas ── */
 html, body {
   width: 100vw;
   height: 100vh;
@@ -36,19 +36,19 @@ html, body {
   justify-content: center;
 }
 
-/* ── Scale wrapper: always 1440×1024, scales down to fit ── */
+/* ── Scale wrapper: 1440×1024 design, scales to fit any window ── */
 .scale-root {
   width: 1440px;
   height: 1024px;
   transform-origin: center center;
   flex-shrink: 0;
+  padding: 20px;                /* black border gap around the card */
 }
 
 /* ── Inner charcoal card ── */
 .footer-section {
-  width: calc(1440px - 48px);
-  height: calc(1024px - 48px);
-  margin: 24px;
+  width: 100%;
+  height: 100%;
   background: #1d1d1d;
   color: #fff;
   border-radius: 20px;
@@ -156,7 +156,6 @@ html, body {
   flex-shrink: 0;
 }
 .apex-dot { background: #fff; border-radius: 50%; }
-
 .footer-brand-copy {
   font-family: 'Inter', sans-serif;
   font-weight: 400;

@@ -5,7 +5,7 @@ function scaleToFit() {
   const el   = document.getElementById('scaleRoot');
   const scaleX = window.innerWidth  / 1440;
   const scaleY = window.innerHeight / 1024;
-  const scale  = Math.min(scaleX, scaleY);
+  const scale = Math.min(scaleX, scaleY);
   el.style.transform = `scale(${scale})`;
 }
 scaleToFit();
@@ -121,9 +121,8 @@ function initPhysics() {
   });
 
   // Scale mouse position to match canvas (since the whole page is CSS-scaled)
-  const scale  = parseFloat(document.getElementById('scaleRoot').style.transform.replace('scale(', '')) || 1;
-  const mouse  = Mouse.create(canvas);
-  mouse.pixelRatio = 1 / scale;
+  const mouse = Mouse.create(canvas);
+  mouse.pixelRatio = 1 / (window._footerScale || 1);
 
   const mc = MouseConstraint.create(engine, {
     mouse,
