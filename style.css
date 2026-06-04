@@ -25,33 +25,22 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── True black outer canvas ── */
+/* ── Black outer: full browser window ── */
 html, body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   background: #0e0e0e;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 14px;              /* the black border gap — visible on all 4 sides */
 }
 
-/* ── Scale wrapper: 1440×1024 design, scales to fit any window ── */
-.scale-root {
-  width: 1440px;
-  height: 1024px;
-  transform-origin: center center;
-  flex-shrink: 0;
-  padding: 20px;                /* black border gap around the card */
-}
-
-/* ── Inner charcoal card ── */
+/* ── Charcoal card: fills everything inside the black gap ── */
 .footer-section {
   width: 100%;
   height: 100%;
   background: #1d1d1d;
   color: #fff;
-  border-radius: 20px;
+  border-radius: 18px;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -60,7 +49,7 @@ html, body {
 
 /* ── Content padding ── */
 .footer-inner {
-  padding: 72px 88px 0;
+  padding: 6% 7% 0;
   flex-shrink: 0;
 }
 
@@ -69,7 +58,7 @@ html, body {
 .anim-phase-2,
 .anim-phase-3 {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translateY(20px);
   will-change: transform, opacity;
 }
 .anim-phase-1.visible {
@@ -95,13 +84,13 @@ html, body {
 .footer-cta-row {
   display: flex;
   align-items: flex-start;
-  gap: 22px;
-  margin-bottom: 44px;
+  gap: 2%;
+  margin-bottom: 4%;
 }
 .footer-cta-title {
   font-family: 'Phudu', 'Arial Black', sans-serif;
   font-weight: 900;
-  font-size: 54px;
+  font-size: clamp(32px, 4vw, 58px);
   line-height: 1.04;
   letter-spacing: 0.3px;
   text-transform: uppercase;
@@ -109,26 +98,26 @@ html, body {
   flex: 1;
 }
 .peace-icon {
-  width: 58px;
-  height: 58px;
+  width: clamp(40px, 4vw, 60px);
+  height: clamp(40px, 4vw, 60px);
   flex-shrink: 0;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 /* ── Dividers ── */
 .footer-divider {
   border: none;
   border-top: 1px dashed rgba(255,255,255,0.10);
-  margin-bottom: 44px;
+  margin-bottom: 4%;
 }
 
 /* ── Zone 2: Nav Grid ── */
 .footer-main {
   display: grid;
   grid-template-columns: 2fr 0.6fr 0.6fr 0.6fr;
-  column-gap: 64px;
+  column-gap: 4%;
   align-items: start;
-  margin-bottom: 44px;
+  margin-bottom: 4%;
 }
 .footer-brand-logo {
   display: flex;
@@ -136,9 +125,9 @@ html, body {
   gap: 10px;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  font-size: 18px;
+  font-size: clamp(14px, 1.3vw, 19px);
   color: #fff;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 .footer-brand-logo sup {
   font-size: 9px;
@@ -147,41 +136,41 @@ html, body {
   opacity: 0.6;
 }
 .apex-symbol {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 3.5px;
+  gap: 3px;
   flex-shrink: 0;
 }
 .apex-dot { background: #fff; border-radius: 50%; }
 .footer-brand-copy {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
-  font-size: 13px;
+  font-size: clamp(11px, 1vw, 14px);
   line-height: 1.65;
   color: rgba(255,255,255,0.36);
 }
 .footer-col-title {
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: 13.5px;
+  font-size: clamp(11px, 1vw, 14px);
   color: rgba(255,255,255,0.88);
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 .footer-col-links {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 12px;
 }
 
 /* ── Link morph hover ── */
 .footer-col-links li a {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
-  font-size: 13.5px;
+  font-size: clamp(11px, 1vw, 14px);
   color: rgba(255,255,255,0.38);
   text-decoration: none;
   display: inline-block;
@@ -220,7 +209,7 @@ html, body {
   opacity: 1;
 }
 
-/* ── Zone 3: Physics ── */
+/* ── Zone 3: Physics canvas ── */
 .footer-physics-zone {
   flex: 1;
   position: relative;
