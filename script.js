@@ -7,115 +7,108 @@
   function scramble(link) {
     const original = link.dataset.original;
     const len      = original.length;
-    const totalMs  = 420;      // total scramble duration
-    const steps    = 14;       // number of scramble frames
+    const totalMs  = 420;
+    const steps    = 14;
     const stepMs   = totalMs / steps;
     let   frame    = 0;
-
-    if (link._scrambleTimer) {
-      clearInterval(link._scrambleTimer);
-    }
-
+    if (link._scrambleTimer) clearInterval(link._scrambleTimer);
     link._scrambleTimer = setInterval(() => {
       frame++;
-      // Progressive reveal: more chars resolve to original as frames advance
       const resolved = Math.floor((frame / steps) * len);
       let display = '';
       for (let i = 0; i < len; i++) {
-        if (original[i] === ' ') {
-          display += ' ';
-        } else if (i < resolved) {
-          display += original[i];   // resolved character
-        } else {
-          display += chars[Math.floor(Math.random() * chars.length)];
-        }
+        if (original[i] === ' ') display += ' ';
+        else if (i < resolved)   display += original[i];
+        else display += chars[Math.floor(Math.random() * chars.length)];
       }
       link.textContent = display;
-
       if (frame >= steps) {
         clearInterval(link._scrambleTimer);
-        link.textContent = original;  // ensure final state is clean
+        link.textContent = original;
       }
     }, stepMs);
   }
 
   function restore(link) {
-    if (link._scrambleTimer) {
-      clearInterval(link._scrambleTimer);
-    }
+    if (link._scrambleTimer) clearInterval(link._scrambleTimer);
     link.textContent = link.dataset.original;
   }
 
   document.querySelectorAll('.footer-col-links li a').forEach(link => {
-    const original = link.textContent.trim();
-    link.dataset.original = original;
-
+    link.dataset.original = link.textContent.trim();
     link.addEventListener('mouseenter', () => scramble(link));
     link.addEventListener('mouseleave', () => restore(link));
   });
 })();
 
 
-
-/* ══════ 1b. DRAGGABLE HAND ══════ */
+/* ══════ 2. DRAGGABLE HAND ══════ */
 (function () {
-  const wrap   = document.getElementById('handWrap');
+  const wrap = document.getElementById('handWrap');
   if (!wrap) return;
 
-  let isDragging = false;
-  let offsetX    = 0;
-  let offsetY    = 0;
+  let dragging = false;
+  let offX = 0, offY = 0;
+  let originParent = null;
+  let originNext   = null;
 
-  function startDrag(clientX, clientY) {
-    isDragging = true;
+  function startDrag(cx, cy) {
+    dragging    = true;
+    originParent = wrap.parentNode;
+    originNext   = wrap.nextSibling;
+
     const rect = wrap.getBoundingClientRect();
-    offsetX    = clientX - rect.left;
-    offsetY    = clientY - rect.top;
-    wrap.style.transition = 'none';
-    wrap.style.cursor     = 'grabbing';
-    // Switch from % positioning to px so we can move freely
-    wrap.style.right  = 'auto';
-    wrap.style.bottom = 'auto';
-    wrap.style.left   = (rect.left) + 'px';
-    wrap.style.top    = (rect.top)  + 'px';
+    offX = cx - rect.left;
+    offY = cy - rect.top;
+
+    // Move to body for free positioning
+    document.body.appendChild(wrap);
+    wrap.style.position = 'fixed';
+    wrap.style.left     = (cx - offX) + 'px';
+    wrap.style.top      = (cy - offY) + 'px';
+    wrap.style.margin   = '0';
+    wrap.style.zIndex   = '1000';
+    wrap.style.cursor   = 'grabbing';
   }
 
-  function moveDrag(clientX, clientY) {
-    if (!isDragging) return;
-    const footer = document.querySelector('.footer-section');
-    const fRect  = footer.getBoundingClientRect();
-    // Constrain within footer bounds
-    let x = clientX - offsetX - fRect.left;
-    let y = clientY - offsetY - fRect.top;
-    x = Math.max(0, Math.min(x, fRect.width  - wrap.offsetWidth));
-    y = Math.max(0, Math.min(y, fRect.height - wrap.offsetHeight));
-    wrap.style.left = x + 'px';
-    wrap.style.top  = y + 'px';
+  function moveDrag(cx, cy) {
+    if (!dragging) return;
+    wrap.style.left = (cx - offX) + 'px';
+    wrap.style.top  = (cy - offY) + 'px';
   }
 
   function endDrag() {
-    if (!isDragging) return;
-    isDragging        = false;
+    if (!dragging) return;
+    dragging = false;
     wrap.style.cursor = 'grab';
+    // Return hand to its original spot in the CTA row
+    if (originParent) {
+      if (originNext) originParent.insertBefore(wrap, originNext);
+      else originParent.appendChild(wrap);
+    }
+    wrap.style.position = '';
+    wrap.style.left     = '';
+    wrap.style.top      = '';
+    wrap.style.zIndex   = '';
+    wrap.style.margin   = '';
   }
 
-  // Mouse
   wrap.addEventListener('mousedown', e => { startDrag(e.clientX, e.clientY); e.preventDefault(); });
   window.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
-  window.addEventListener('mouseup',   endDrag);
+  window.addEventListener('mouseup', endDrag);
 
-  // Touch
   wrap.addEventListener('touchstart', e => {
     startDrag(e.touches[0].clientX, e.touches[0].clientY);
     e.preventDefault();
   }, { passive: false });
   window.addEventListener('touchmove', e => {
-    if (isDragging) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+    if (dragging) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: false });
   window.addEventListener('touchend', endDrag);
 })();
 
-/* ══════ 2. STAGED ENTRY ══════ */
+
+/* ══════ 3. STAGED ENTRY ══════ */
 function runPhases() {
   document.querySelectorAll('.anim-phase-1').forEach(el => el.classList.add('visible'));
   setTimeout(() => {
@@ -129,16 +122,16 @@ function runPhases() {
 runPhases();
 
 
-/* ══════ 3. PHYSICS RAIN + HOVER ══════ */
+/* ══════ 4. PHYSICS RAIN ══════ */
 function initPhysics() {
-  const { Engine, Render, Runner, Bodies, Body, World, Mouse, MouseConstraint, Events, Vector } = Matter;
+  const { Engine, Render, Runner, Bodies, Body, World, Mouse, MouseConstraint, Events, Composite } = Matter;
 
-  const zone   = document.getElementById('physicsZone');
-  const W      = zone.offsetWidth;
-  const H      = zone.offsetHeight;
+  const zone = document.getElementById('physicsZone');
+  const W    = zone.offsetWidth;
+  const H    = zone.offsetHeight;
+
   const dpr    = window.devicePixelRatio || 1;
   const canvas = document.getElementById('physicsCanvas');
-
   canvas.width        = W * dpr;
   canvas.height       = H * dpr;
   canvas.style.width  = W + 'px';
@@ -147,8 +140,7 @@ function initPhysics() {
   const engine = Engine.create({ gravity: { y: 1.8 } });
 
   const render = Render.create({
-    canvas,
-    engine,
+    canvas, engine,
     options: {
       width:      W * dpr,
       height:     H * dpr,
@@ -174,36 +166,48 @@ function initPhysics() {
     ['bimg-13', 179, 101, 152],
   ];
 
-  // Pre-build texture URLs for both normal and hover states
-  const textures = {};
-  blobDefs.forEach(([imgId, nW, nH, dW]) => {
+  // Double for density — 24 blobs total
+  const allDefs = [...blobDefs, ...blobDefs];
+
+  // Pre-load hover textures
+  const hoverSrcs = {};
+  blobDefs.forEach(([imgId]) => {
     const img = document.getElementById(imgId);
-    const num = imgId.replace('bimg-', '');
-    textures[imgId] = {
-      normal: img ? img.src : '',
-      hover:  img ? img.src.replace('/blobs/', '/blobs-hover/') : '',
-      nW, nH, dW,
-      xScale: (dW / nW) * dpr,
-      yScale: (dW / nW) * dpr,
-    };
+    if (img) {
+      hoverSrcs[imgId] = {
+        normal: img.src,
+        hover:  img.src.replace('/blobs/', '/blobs-hover/'),
+      };
+    }
   });
 
-  const bodies = blobDefs.map(([imgId, nW, nH, dW]) => {
-    const dH  = Math.round((nH / nW) * dW);
-    const t   = textures[imgId];
-    const x   = 60 + Math.random() * (W - 120);
-    const y   = -(Math.random() * H * 1.6) - dH;
+  // Zone columns — spread blobs across 6 zones
+  const zones   = 6;
+  const zoneW   = (W - 80) / zones;
 
-    const body = Bodies.rectangle(x, y, dW * 0.78, dH * 0.68, {
-      restitution: 0.3,
-      friction:    0.6,
-      frictionAir: 0.018,
-      density:     0.004,
+  const bodies = allDefs.map(([imgId, nW, nH, dW], i) => {
+    const dH  = Math.round((nH / nW) * dW);
+    const img = document.getElementById(imgId);
+    const src = img ? img.src : '';
+
+    const zoneIdx = i % zones;
+    const x = 40 + zoneIdx * zoneW + Math.random() * zoneW * 0.75;
+
+    // Wave 1 drops first, wave 2 rains down on top
+    const wave = i < 12 ? 0 : 1;
+    const y    = -(dH + 20) - (wave * H * 0.9) - Math.random() * H * 0.5 - i * 25;
+
+    const body = Bodies.rectangle(x, y, dW, dH, {
+      restitution:    0.05,
+      friction:       0.9,
+      frictionAir:    0.018,
+      frictionStatic: 0.8,
+      density:        0.005,
       render: {
         sprite: {
-          texture: t.normal,
-          xScale:  t.xScale,
-          yScale:  t.yScale,
+          texture: src,
+          xScale:  (dW / nW) * dpr,
+          yScale:  (dW / nW) * dpr,
         }
       }
     });
@@ -211,53 +215,72 @@ function initPhysics() {
     body._imgId     = imgId;
     body._isHovered = false;
     body._jiggling  = false;
-
-    Body.setAngle(body, (Math.random() - 0.5) * 0.7);
-    Body.setVelocity(body, { x: (Math.random() - 0.5) * 2, y: 0 });
+    Body.setAngle(body, (Math.random() - 0.5) * 0.5);
+    Body.setVelocity(body, { x: (Math.random() - 0.5) * 1.2, y: 0 });
     return body;
   });
 
   // Boundaries
-  const ground    = Bodies.rectangle(W / 2,  H + 25,  W + 200, 50, { isStatic: true, render: { fillStyle: 'transparent' } });
-  const wallLeft  = Bodies.rectangle(-25,    H / 2,   50, H * 4,   { isStatic: true, render: { fillStyle: 'transparent' } });
-  const wallRight = Bodies.rectangle(W + 25, H / 2,   50, H * 4,   { isStatic: true, render: { fillStyle: 'transparent' } });
+  const ground    = Bodies.rectangle(W / 2,  H + 25, W + 200, 50, { isStatic: true, render: { fillStyle: 'transparent' } });
+  const wallLeft  = Bodies.rectangle(-25,    H / 2,  50, H * 4,   { isStatic: true, render: { fillStyle: 'transparent' } });
+  const wallRight = Bodies.rectangle(W + 25, H / 2,  50, H * 4,   { isStatic: true, render: { fillStyle: 'transparent' } });
   World.add(engine.world, [ground, wallLeft, wallRight]);
 
-  // Rain — staggered drop
-  // First wave drops, second wave falls on top
+  // Rain with stagger
   bodies.forEach((body, i) => {
     setTimeout(() => World.add(engine.world, body), i * 75);
   });
 
-  // Mouse
+  // ── Mouse — increased grab threshold so any blob is easily pickable ──
   const mouse = Mouse.create(canvas);
   mouse.pixelRatio = dpr;
+
   const mc = MouseConstraint.create(engine, {
     mouse,
-    constraint: { stiffness: 0.2, damping: 0.1, render: { visible: false } }
+    constraint: { stiffness: 0.2, damping: 0.1, render: { visible: false } },
   });
+
+  // Patch: after each mouse move, find nearest body within 40px and make it the target
+  // This ensures buried/edge blobs are always grabbable
+  Events.on(mc, 'mousedown', () => {
+    const mx = mouse.position.x;
+    const my = mouse.position.y;
+    const allBodies = Composite.allBodies(engine.world).filter(b => !b.isStatic);
+
+    let nearest = null;
+    let nearestDist = 60 * 60; // 60px grab radius
+
+    allBodies.forEach(body => {
+      const dx = body.position.x - mx;
+      const dy = body.position.y - my;
+      const d2 = dx * dx + dy * dy;
+      if (d2 < nearestDist) {
+        nearestDist = d2;
+        nearest = body;
+      }
+    });
+
+    if (nearest && !mc.body) {
+      mc.body = nearest;
+    }
+  });
+
   World.add(engine.world, mc);
   render.mouse = mouse;
 
-  // ── Hover detection + jiggle + texture swap ──
+  // ── Hover: jiggle + texture swap ──
   let hoveredBody = null;
 
   function jiggle(body) {
     if (body._jiggling) return;
     body._jiggling = true;
-
-    const cx   = body.position.x;
-    const cy   = body.position.y;
-    const amp  = 0.18;   // rotation amplitude in radians
-    const dur  = 60;     // ms per step
-    const seq  = [amp, -amp * 1.1, amp * 0.7, -amp * 0.4, amp * 0.15, 0];
-    let step   = 0;
-
+    const seq = [0.32, -0.36, 0.24, -0.14, 0.06, 0];
+    let step = 0;
     const tick = () => {
       if (step < seq.length) {
-        Body.setAngularVelocity(body, seq[step] * 1.8);
+        Body.setAngularVelocity(body, seq[step]);
         step++;
-        setTimeout(tick, dur);
+        setTimeout(tick, 55);
       } else {
         body._jiggling = false;
       }
@@ -266,15 +289,13 @@ function initPhysics() {
   }
 
   Events.on(engine, 'afterUpdate', () => {
-    const mx = mouse.position.x / dpr;
-    const my = mouse.position.y / dpr;
-
-    // Get all bodies in world (excluding static walls/ground)
-    const allBodies = Matter.Composite.allBodies(engine.world).filter(b => !b.isStatic);
+    const mx = mouse.position.x;
+    const my = mouse.position.y;
+    const allBodies = Composite.allBodies(engine.world).filter(b => !b.isStatic);
 
     let found = null;
+    // Find body whose bounds contain the mouse
     for (const body of allBodies) {
-      // Simple AABB hit test
       const { min, max } = body.bounds;
       if (mx >= min.x && mx <= max.x && my >= min.y && my <= max.y) {
         found = body;
@@ -283,14 +304,12 @@ function initPhysics() {
     }
 
     if (found !== hoveredBody) {
-      // Mouse left old body
-      if (hoveredBody && hoveredBody._imgId) {
-        hoveredBody.render.sprite.texture = textures[hoveredBody._imgId].normal;
+      if (hoveredBody?._imgId && hoverSrcs[hoveredBody._imgId]) {
+        hoveredBody.render.sprite.texture = hoverSrcs[hoveredBody._imgId].normal;
         hoveredBody._isHovered = false;
       }
-      // Mouse entered new body
-      if (found && found._imgId) {
-        found.render.sprite.texture = textures[found._imgId].hover;
+      if (found?._imgId && hoverSrcs[found._imgId]) {
+        found.render.sprite.texture = hoverSrcs[found._imgId].hover;
         found._isHovered = true;
         jiggle(found);
         canvas.style.cursor = 'pointer';

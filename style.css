@@ -33,6 +33,7 @@ html, body {
   padding: 14px;
 }
 
+/* ── Charcoal card ── */
 .footer-section {
   width: 100%;
   height: 100%;
@@ -45,13 +46,8 @@ html, body {
   flex-direction: column;
 }
 
-/* ensure nav cols never clip their text */
-.footer-col-links li a {
-  overflow: visible !important;
-}
-
 .footer-inner {
-  padding: 5.5% 5% 0;
+  padding: 5.5% 6% 0;
   flex-shrink: 0;
 }
 
@@ -92,27 +88,31 @@ html, body {
 .footer-cta-title {
   font-family: 'Phudu', 'Arial Black', sans-serif;
   font-weight: 900;
-  font-size: clamp(28px, 3.6vw, 54px);
+  font-size: clamp(24px, 3.6vw, 54px);
   line-height: 1.04;
   letter-spacing: 0.3px;
   text-transform: uppercase;
   color: #fff;
   flex: 1;
 }
-/* ── Draggable hand — sits beside CTA headline ── */
+
+/* ── Draggable hand — inline with CTA ── */
 .hand-wrap {
-  position: absolute;
-  top: 6.5%;
-  left: clamp(520px, 48%, 720px);
-  width: clamp(52px, 5vw, 72px);
-  height: clamp(66px, 6.4vw, 92px);
+  flex-shrink: 0;
+  margin-top: 2px;
+  width: clamp(48px, 4.5vw, 68px);
+  height: clamp(60px, 5.8vw, 88px);
   cursor: grab;
   user-select: none;
-  z-index: 10;
   touch-action: none;
+  /* Will be moved to absolute on drag via JS */
 }
-.hand-wrap:active { cursor: grabbing; }
-
+.hand-wrap.is-dragging {
+  position: fixed;
+  cursor: grabbing;
+  z-index: 100;
+  pointer-events: none;
+}
 .hand-img {
   width: 100%;
   height: 100%;
@@ -132,7 +132,7 @@ html, body {
 .footer-main {
   display: grid;
   grid-template-columns: 1.4fr 1fr 1fr 1fr;
-  column-gap: 2%;
+  column-gap: 3%;
   align-items: start;
   margin-bottom: 3.5%;
 }
@@ -162,7 +162,6 @@ html, body {
   flex-shrink: 0;
 }
 .apex-dot { background: #fff; border-radius: 50%; }
-
 .footer-brand-copy {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
@@ -170,11 +169,7 @@ html, body {
   line-height: 1.65;
   color: rgba(255,255,255,0.36);
 }
-
-.footer-col {
-  min-width: 0;    /* prevents grid blowout */
-}
-
+.footer-col { min-width: 0; }
 .footer-col-title {
   font-family: 'Inter', sans-serif;
   font-weight: 600;
@@ -183,7 +178,6 @@ html, body {
   margin-bottom: 16px;
   white-space: nowrap;
 }
-
 .footer-col-links {
   list-style: none;
   display: flex;
@@ -211,7 +205,7 @@ html, body {
 .footer-physics-zone {
   flex: 1;
   position: relative;
-  min-height: 0;
+  min-height: 160px;   /* always has room for blobs */
 }
 #physicsCanvas {
   display: block;
@@ -221,3 +215,38 @@ html, body {
   height: 100%;
 }
 .blob-preload { display: none; }
+
+/* ══════════════════════════
+   MOBILE RESPONSIVE
+══════════════════════════ */
+@media (max-width: 700px) {
+  html, body { padding: 8px; }
+
+  .footer-inner { padding: 7% 6% 0; }
+
+  .footer-cta-title { font-size: clamp(22px, 6.5vw, 36px); }
+
+  .hand-wrap {
+    width: clamp(36px, 8vw, 52px);
+    height: clamp(46px, 10vw, 66px);
+  }
+
+  /* Stack nav into 2 columns on mobile */
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 6%;
+  }
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  .footer-physics-zone { min-height: 120px; }
+}
+
+@media (max-width: 420px) {
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .footer-cta-title { font-size: 20px; }
+}
