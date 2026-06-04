@@ -150,7 +150,7 @@ function initPhysics() {
     }
   });
 
-  // [imgId, naturalW, naturalH, displayW] — reduced ~20% from original sizes
+  // [imgId, naturalW, naturalH, displayW] — ~20% smaller than original
   const blobDefs = [
     ['bimg-1',  209, 135, 122],
     ['bimg-2',  184,  79, 116],
@@ -166,28 +166,12 @@ function initPhysics() {
     ['bimg-13', 179, 101, 120],
   ];
 
-  // Variant blobs — different colors + labels, same authentic shapes
-  const variantDefs = [
-    ['bimg-v1',  184,  79, 116],
-    ['bimg-v2',  190, 105, 122],
-    ['bimg-v3',  209, 135, 122],
-    ['bimg-v4',  200, 154, 116],
-    ['bimg-v5',  179, 101, 120],
-    ['bimg-v6',  197, 119, 126],
-    ['bimg-v7',  190, 105, 122],
-    ['bimg-v8',  229, 139, 140],
-    ['bimg-v9',  200, 142, 126],
-    ['bimg-v10', 194, 124, 122],
-    ['bimg-v11', 200, 154, 118],
-    ['bimg-v12', 185, 187, 118],
-  ];
-
-  // 24 blobs total — originals + variants
-  const allDefs = [...blobDefs, ...variantDefs];
+  // 24 blobs — exact duplicates of originals for density
+  const allDefs = [...blobDefs, ...blobDefs];
 
   // Pre-load hover textures for all blobs
   const hoverSrcs = {};
-  [...blobDefs, ...variantDefs].forEach(([imgId]) => {
+  blobDefs.forEach(([imgId]) => {
     const img = document.getElementById(imgId);
     if (img) {
       hoverSrcs[imgId] = {
