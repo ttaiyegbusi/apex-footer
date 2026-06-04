@@ -8,6 +8,85 @@ document.querySelectorAll('.footer-col-links li a').forEach(link => {
 });
 
 
+
+/* ══════ 1b. ELASTIC HAND ══════ */
+(function () {
+  const wrap = document.getElementById('handWrap');
+  const img  = document.getElementById('handImg');
+  if (!wrap || !img) return;
+
+  let isDragging  = false;
+  let startX      = 0;
+  let currentDrag = 0;
+  const MAX_PULL  = 160;   // max pixels you can drag right
+
+  function applyStretch(dx) {
+    // Clamp to rightward only
+    dx = Math.max(0, Math.min(dx, MAX_PULL));
+    currentDrag = dx;
+
+    // Normalised 0→1
+    const t = dx / MAX_PULL;
+
+    // Stretch: scaleX grows, scaleY squishes (rubber conservation)
+    const scaleX = 1 + t * 1.4;          // stretches up to 2.4x wide
+    const scaleY = 1 - t * 0.28;         // squishes to ~72% tall
+    const skewY  = t * -6;               // slight tilt as it pulls
+    const translateX = dx * 0.55;        // moves rightward with drag
+
+    img.style.transition = 'none';
+    img.style.transform  =
+      `translateX(${translateX}px) scaleX(${scaleX}) scaleY(${scaleY}) skewY(${skewY}deg)`;
+  }
+
+  function snapBack() {
+    img.classList.add('snapping');
+    img.style.transform = 'translateX(0) scaleX(1) scaleY(1) skewY(0deg)';
+    img.addEventListener('transitionend', () => {
+      img.classList.remove('snapping');
+    }, { once: true });
+    currentDrag = 0;
+  }
+
+  // Mouse
+  wrap.addEventListener('mousedown', e => {
+    isDragging = true;
+    startX     = e.clientX;
+    img.classList.remove('snapping');
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    applyStretch(e.clientX - startX);
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    snapBack();
+  });
+
+  // Touch
+  wrap.addEventListener('touchstart', e => {
+    isDragging = true;
+    startX     = e.touches[0].clientX;
+    img.classList.remove('snapping');
+    e.preventDefault();
+  }, { passive: false });
+
+  window.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    applyStretch(e.touches[0].clientX - startX);
+  });
+
+  window.addEventListener('touchend', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    snapBack();
+  });
+})();
+
 /* ══════ 2. STAGED ENTRY ══════ */
 function runPhases() {
   document.querySelectorAll('.anim-phase-1').forEach(el => el.classList.add('visible'));
