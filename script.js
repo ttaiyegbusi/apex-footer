@@ -5,22 +5,15 @@ document.querySelectorAll('.footer-col-links li a').forEach(link => {
   const original = link.textContent.trim();
   const parent   = link.dataset.parent || '';
   link.innerHTML = `<span class="txt-original">${original}</span><span class="txt-parent">${parent}</span>`;
-
-  // width is inherited from block layout — no manual sizing needed
 });
 
 
 /* ══════ 2. STAGED ENTRY ══════ */
 function runPhases() {
-  // Phase 1 — CTA, immediate, 1.2s ease
   document.querySelectorAll('.anim-phase-1').forEach(el => el.classList.add('visible'));
-
-  // Phase 2 — Nav links, after CTA settles
   setTimeout(() => {
     document.querySelectorAll('.anim-phase-2').forEach(el => el.classList.add('visible'));
   }, 1100);
-
-  // Phase 3 — Blobs rain, after nav settles
   setTimeout(() => {
     document.querySelectorAll('.anim-phase-3').forEach(el => el.classList.add('visible'));
     initPhysics();
@@ -29,17 +22,16 @@ function runPhases() {
 runPhases();
 
 
-/* ══════ 3. PHYSICS RAIN ══════ */
+/* ══════ 3. PHYSICS RAIN + HOVER ══════ */
 function initPhysics() {
-  const { Engine, Render, Runner, Bodies, Body, World, Mouse, MouseConstraint } = Matter;
+  const { Engine, Render, Runner, Bodies, Body, World, Mouse, MouseConstraint, Events, Vector } = Matter;
 
-  const zone = document.getElementById('physicsZone');
-  const W    = zone.offsetWidth;
-  const H    = zone.offsetHeight;
-
-  // Hi-DPI canvas — multiplied by devicePixelRatio for crisp rendering
+  const zone   = document.getElementById('physicsZone');
+  const W      = zone.offsetWidth;
+  const H      = zone.offsetHeight;
   const dpr    = window.devicePixelRatio || 1;
   const canvas = document.getElementById('physicsCanvas');
+
   canvas.width        = W * dpr;
   canvas.height       = H * dpr;
   canvas.style.width  = W + 'px';
@@ -75,29 +67,43 @@ function initPhysics() {
     ['bimg-13', 179, 101, 152],
   ];
 
-  const bodies = blobDefs.map((def) => {
-    const [imgId, nW, nH, dW] = def;
-    const dH  = Math.round((nH / nW) * dW);
+  // Pre-build texture URLs for both normal and hover states
+  const textures = {};
+  blobDefs.forEach(([imgId, nW, nH, dW]) => {
     const img = document.getElementById(imgId);
-    const src = img ? img.src : '';
+    const num = imgId.replace('bimg-', '');
+    textures[imgId] = {
+      normal: img ? img.src : '',
+      hover:  img ? img.src.replace('/blobs/', '/blobs-hover/') : '',
+      nW, nH, dW,
+      xScale: (dW / nW) * dpr,
+      yScale: (dW / nW) * dpr,
+    };
+  });
 
-    // Random x across full width, random y staggered above canvas
-    const x = 60 + Math.random() * (W - 120);
-    const y = -(Math.random() * H * 1.6) - dH;
+  const bodies = blobDefs.map(([imgId, nW, nH, dW]) => {
+    const dH  = Math.round((nH / nW) * dW);
+    const t   = textures[imgId];
+    const x   = 60 + Math.random() * (W - 120);
+    const y   = -(Math.random() * H * 1.6) - dH;
 
     const body = Bodies.rectangle(x, y, dW * 0.78, dH * 0.68, {
       restitution: 0.3,
       friction:    0.6,
-      frictionAir: 0.018,  // low enough to fall with purpose
+      frictionAir: 0.018,
       density:     0.004,
       render: {
         sprite: {
-          texture: src,
-          xScale:  (dW / nW) * dpr,
-          yScale:  (dW / nW) * dpr,
+          texture: t.normal,
+          xScale:  t.xScale,
+          yScale:  t.yScale,
         }
       }
     });
+
+    body._imgId     = imgId;
+    body._isHovered = false;
+    body._jiggling  = false;
 
     Body.setAngle(body, (Math.random() - 0.5) * 0.7);
     Body.setVelocity(body, { x: (Math.random() - 0.5) * 2, y: 0 });
@@ -110,12 +116,12 @@ function initPhysics() {
   const wallRight = Bodies.rectangle(W + 25, H / 2,   50, H * 4,   { isStatic: true, render: { fillStyle: 'transparent' } });
   World.add(engine.world, [ground, wallLeft, wallRight]);
 
-  // Staggered rain — 80ms apart, fast enough to feel alive
+  // Rain — staggered drop
   bodies.forEach((body, i) => {
     setTimeout(() => World.add(engine.world, body), i * 80);
   });
 
-  // Mouse drag — corrected for DPR
+  // Mouse
   const mouse = Mouse.create(canvas);
   mouse.pixelRatio = dpr;
   const mc = MouseConstraint.create(engine, {
@@ -124,6 +130,68 @@ function initPhysics() {
   });
   World.add(engine.world, mc);
   render.mouse = mouse;
+
+  // ── Hover detection + jiggle + texture swap ──
+  let hoveredBody = null;
+
+  function jiggle(body) {
+    if (body._jiggling) return;
+    body._jiggling = true;
+
+    const cx   = body.position.x;
+    const cy   = body.position.y;
+    const amp  = 0.18;   // rotation amplitude in radians
+    const dur  = 60;     // ms per step
+    const seq  = [amp, -amp * 1.1, amp * 0.7, -amp * 0.4, amp * 0.15, 0];
+    let step   = 0;
+
+    const tick = () => {
+      if (step < seq.length) {
+        Body.setAngularVelocity(body, seq[step] * 1.8);
+        step++;
+        setTimeout(tick, dur);
+      } else {
+        body._jiggling = false;
+      }
+    };
+    tick();
+  }
+
+  Events.on(engine, 'afterUpdate', () => {
+    const mx = mouse.position.x / dpr;
+    const my = mouse.position.y / dpr;
+
+    // Get all bodies in world (excluding static walls/ground)
+    const allBodies = Matter.Composite.allBodies(engine.world).filter(b => !b.isStatic);
+
+    let found = null;
+    for (const body of allBodies) {
+      // Simple AABB hit test
+      const { min, max } = body.bounds;
+      if (mx >= min.x && mx <= max.x && my >= min.y && my <= max.y) {
+        found = body;
+        break;
+      }
+    }
+
+    if (found !== hoveredBody) {
+      // Mouse left old body
+      if (hoveredBody && hoveredBody._imgId) {
+        hoveredBody.render.sprite.texture = textures[hoveredBody._imgId].normal;
+        hoveredBody._isHovered = false;
+      }
+      // Mouse entered new body
+      if (found && found._imgId) {
+        found.render.sprite.texture = textures[found._imgId].hover;
+        found._isHovered = true;
+        jiggle(found);
+        canvas.style.cursor = 'pointer';
+      } else {
+        canvas.style.cursor = 'default';
+      }
+      hoveredBody = found || null;
+    }
+  });
 
   Render.run(render);
   Runner.run(Runner.create(), engine);
