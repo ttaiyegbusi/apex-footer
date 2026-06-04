@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=1440" />
   <title>Apex — Footer</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
@@ -11,153 +11,94 @@
 <footer class="footer-section">
   <div class="footer-inner">
 
-    <!-- ── Zone 1: CTA Headline ── -->
-    <div class="footer-cta-row">
+    <!-- Zone 1: CTA -->
+    <div class="footer-cta-row anim-phase-1">
       <h2 class="footer-cta-title">
         Thank you for your curiosity.<br>
         Let&rsquo;s build something cool
       </h2>
-      <!-- Peace / Victory hand -->
       <svg class="peace-icon" viewBox="0 0 54 62" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M27 4C24.6 4 22.5 5.8 22.5 8.2V30"          stroke="white" stroke-width="2.6" stroke-linecap="round"/>
-        <path d="M33 7C33 4.5 35 2.5 37.5 2.5C40 2.5 42 4.5 42 7V28"  stroke="white" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M27 4C24.6 4 22.5 5.8 22.5 8.2V30" stroke="white" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M33 7C33 4.5 35 2.5 37.5 2.5C40 2.5 42 4.5 42 7V28" stroke="white" stroke-width="2.6" stroke-linecap="round"/>
         <path d="M22.5 11C22.5 8.5 20.5 6.5 18 6.5C15.5 6.5 13.5 8.5 13.5 11V32" stroke="white" stroke-width="2.6" stroke-linecap="round"/>
-        <path d="M42 16C42 13.5 44 11.5 46.5 11.5C49 11.5 51 13.5 51 16V36C51 47.5 40.5 57 27 57C13.5 57 3 47.5 3 36V32C3 29.5 5 27.5 7.5 27.5C10 27.5 12 29.5 12 32"
-              stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M42 16C42 13.5 44 11.5 46.5 11.5C49 11.5 51 13.5 51 16V36C51 47.5 40.5 57 27 57C13.5 57 3 47.5 3 36V32C3 29.5 5 27.5 7.5 27.5C10 27.5 12 29.5 12 32" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
 
-    <!-- ── Divider ── -->
-    <hr class="footer-divider" />
+    <hr class="footer-divider anim-phase-1" />
 
-    <!-- ── Zone 2: Nav Grid ── -->
-    <div class="footer-main">
-
-      <!-- Brand -->
+    <!-- Zone 2: Nav -->
+    <div class="footer-main anim-phase-2">
       <div class="footer-brand">
         <div class="footer-brand-logo">
           <div class="apex-symbol" aria-hidden="true">
-            <div class="apex-dot"></div>
-            <div class="apex-dot"></div>
-            <div class="apex-dot"></div>
-            <div class="apex-dot"></div>
+            <div class="apex-dot"></div><div class="apex-dot"></div>
+            <div class="apex-dot"></div><div class="apex-dot"></div>
           </div>
           <span>Apex<sup>™</sup></span>
         </div>
         <p class="footer-brand-copy">
-          Smarter tools for modern finance teams.<br>
-          All rights reserved.
+          Smarter tools for modern finance teams.<br>All rights reserved.
         </p>
       </div>
 
-      <!-- Quick Links -->
       <div class="footer-col">
         <p class="footer-col-title">Quick Links</p>
         <ul class="footer-col-links">
-          <li><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Services</a></li>
-          <li><a href="#">Contact</a></li>
+          <li><a href="#" data-parent="Quick Links">Home</a></li>
+          <li><a href="#" data-parent="Quick Links">About</a></li>
+          <li><a href="#" data-parent="Quick Links">Services</a></li>
+          <li><a href="#" data-parent="Quick Links">Contact</a></li>
         </ul>
       </div>
 
-      <!-- Products -->
       <div class="footer-col">
         <p class="footer-col-title">Products</p>
         <ul class="footer-col-links">
-          <li><a href="#">AI Assistant</a></li>
-          <li><a href="#">Mobile App</a></li>
-          <li><a href="#">Account</a></li>
-          <li><a href="#">Credit Card</a></li>
+          <li><a href="#" data-parent="Products">AI Assistant</a></li>
+          <li><a href="#" data-parent="Products">Mobile App</a></li>
+          <li><a href="#" data-parent="Products">Account</a></li>
+          <li><a href="#" data-parent="Products">Credit Card</a></li>
         </ul>
       </div>
 
-      <!-- Company -->
       <div class="footer-col">
         <p class="footer-col-title">Company</p>
         <ul class="footer-col-links">
-          <li><a href="#">About</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Support</a></li>
-          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#" data-parent="Company">About</a></li>
+          <li><a href="#" data-parent="Company">Privacy Policy</a></li>
+          <li><a href="#" data-parent="Company">Support</a></li>
+          <li><a href="#" data-parent="Company">Terms of Service</a></li>
         </ul>
       </div>
-
     </div>
 
-    <!-- ── Divider ── -->
-    <hr class="footer-divider" />
-
-  </div><!-- /footer-inner -->
-
-  <!-- ── Zone 3: Tag Cloud (full bleed) ── -->
-  <div class="footer-tag-cloud-wrapper">
-    <div class="footer-tag-cloud">
-
-      <!-- MARKETING -->
-      <div class="blob-tag" style="left:-20px; bottom:18px; --delay:0s; --dur:5.2s;">
-        <img src="./assets/blobs/blob-1.svg" width="160" alt="Marketing" />
-      </div>
-
-      <!-- STRATEGY -->
-      <div class="blob-tag" style="left:100px; bottom:75px; --delay:0.4s; --dur:6.1s;">
-        <img src="./assets/blobs/blob-2.svg" width="155" alt="Strategy" />
-      </div>
-
-      <!-- BRANDING -->
-      <div class="blob-tag" style="left:215px; bottom:15px; --delay:0.8s; --dur:4.8s;">
-        <img src="./assets/blobs/blob-3.svg" width="162" alt="Branding" />
-      </div>
-
-      <!-- SALES -->
-      <div class="blob-tag" style="left:325px; bottom:62px; --delay:1.2s; --dur:5.7s;">
-        <img src="./assets/blobs/blob-4.svg" width="155" alt="Sales" />
-      </div>
-
-      <!-- WEBSITE DEV -->
-      <div class="blob-tag" style="left:440px; bottom:22px; --delay:0.3s; --dur:6.4s;">
-        <img src="./assets/blobs/blob-5.svg" width="168" alt="Website Dev" />
-      </div>
-
-      <!-- FRAMER DEV -->
-      <div class="blob-tag" style="left:570px; bottom:52px; --delay:0.7s; --dur:5.0s;">
-        <img src="./assets/blobs/blob-11.svg" width="188" alt="Framer Dev" />
-      </div>
-
-      <!-- WEBFLOW -->
-      <div class="blob-tag" style="left:710px; bottom:14px; --delay:1.1s; --dur:5.8s;">
-        <img src="./assets/blobs/blob-6.svg" width="168" alt="Webflow" />
-      </div>
-
-      <!-- NEWSLETTER -->
-      <div class="blob-tag" style="left:840px; bottom:45px; --delay:0.2s; --dur:6.2s;">
-        <img src="./assets/blobs/blob-8.svg" width="162" alt="Newsletter" />
-      </div>
-
-      <!-- UI/UX DESIGN -->
-      <div class="blob-tag" style="left:960px; bottom:18px; --delay:0.9s; --dur:4.9s;">
-        <img src="./assets/blobs/blob-9.svg" width="165" alt="UI/UX Design" />
-      </div>
-
-      <!-- PORTFOLIO -->
-      <div class="blob-tag" style="left:1080px; bottom:55px; --delay:0.5s; --dur:5.5s;">
-        <img src="./assets/blobs/blob-10.svg" width="158" alt="Portfolio" />
-      </div>
-
-      <!-- ILLUSTRATION -->
-      <div class="blob-tag" style="left:1190px; bottom:8px; --delay:0.6s; --dur:5.3s;">
-        <img src="./assets/blobs/blob-12.svg" width="158" alt="Illustration" />
-      </div>
-
-      <!-- ADVERTISEMENT -->
-      <div class="blob-tag" style="left:1300px; bottom:35px; --delay:1.3s; --dur:6.0s;">
-        <img src="./assets/blobs/blob-13.svg" width="162" alt="Advertisement" />
-      </div>
-
-    </div>
+    <hr class="footer-divider anim-phase-2" />
   </div>
 
+  <!-- Zone 3: Physics canvas -->
+  <div class="footer-physics-zone anim-phase-3" id="physicsZone">
+    <canvas id="physicsCanvas"></canvas>
+    <!-- Blob images preloaded for Matter.js rendering -->
+    <div class="blob-preload" aria-hidden="true">
+      <img id="bimg-1"  src="./assets/blobs/blob-1.svg"  alt="" />
+      <img id="bimg-2"  src="./assets/blobs/blob-2.svg"  alt="" />
+      <img id="bimg-3"  src="./assets/blobs/blob-3.svg"  alt="" />
+      <img id="bimg-4"  src="./assets/blobs/blob-4.svg"  alt="" />
+      <img id="bimg-5"  src="./assets/blobs/blob-5.svg"  alt="" />
+      <img id="bimg-6"  src="./assets/blobs/blob-6.svg"  alt="" />
+      <img id="bimg-8"  src="./assets/blobs/blob-8.svg"  alt="" />
+      <img id="bimg-9"  src="./assets/blobs/blob-9.svg"  alt="" />
+      <img id="bimg-10" src="./assets/blobs/blob-10.svg" alt="" />
+      <img id="bimg-11" src="./assets/blobs/blob-11.svg" alt="" />
+      <img id="bimg-12" src="./assets/blobs/blob-12.svg" alt="" />
+      <img id="bimg-13" src="./assets/blobs/blob-13.svg" alt="" />
+    </div>
+  </div>
 </footer>
 
+<!-- Matter.js from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script src="./script.js"></script>
 </body>
 </html>

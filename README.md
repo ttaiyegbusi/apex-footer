@@ -54,4 +54,3 @@ git push -u origin main
 
 Vercel will automatically detect `index.html` as the entry point.  
 Every `git push` to `main` will trigger a redeploy automatically.
-# apex-footer
