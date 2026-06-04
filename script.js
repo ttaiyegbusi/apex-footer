@@ -150,28 +150,44 @@ function initPhysics() {
     }
   });
 
-  // [imgId, naturalW, naturalH, displayW]
+  // [imgId, naturalW, naturalH, displayW] — reduced ~20% from original sizes
   const blobDefs = [
-    ['bimg-1',  209, 135, 155],
-    ['bimg-2',  184,  79, 148],
-    ['bimg-3',  190, 105, 155],
-    ['bimg-4',  200, 154, 148],
-    ['bimg-5',  200, 142, 160],
-    ['bimg-6',  197, 119, 160],
-    ['bimg-8',  194, 124, 155],
-    ['bimg-9',  190, 105, 158],
-    ['bimg-10', 185, 187, 150],
-    ['bimg-11', 229, 139, 178],
-    ['bimg-12', 200, 154, 150],
-    ['bimg-13', 179, 101, 152],
+    ['bimg-1',  209, 135, 122],
+    ['bimg-2',  184,  79, 116],
+    ['bimg-3',  190, 105, 122],
+    ['bimg-4',  200, 154, 116],
+    ['bimg-5',  200, 142, 126],
+    ['bimg-6',  197, 119, 126],
+    ['bimg-8',  194, 124, 122],
+    ['bimg-9',  190, 105, 124],
+    ['bimg-10', 185, 187, 118],
+    ['bimg-11', 229, 139, 140],
+    ['bimg-12', 200, 154, 118],
+    ['bimg-13', 179, 101, 120],
   ];
 
-  // Double for density — 24 blobs total
-  const allDefs = [...blobDefs, ...blobDefs];
+  // Variant blobs — different colors + labels, same authentic shapes
+  const variantDefs = [
+    ['bimg-v1',  184,  79, 116],
+    ['bimg-v2',  190, 105, 122],
+    ['bimg-v3',  209, 135, 122],
+    ['bimg-v4',  200, 154, 116],
+    ['bimg-v5',  179, 101, 120],
+    ['bimg-v6',  197, 119, 126],
+    ['bimg-v7',  190, 105, 122],
+    ['bimg-v8',  229, 139, 140],
+    ['bimg-v9',  200, 142, 126],
+    ['bimg-v10', 194, 124, 122],
+    ['bimg-v11', 200, 154, 118],
+    ['bimg-v12', 185, 187, 118],
+  ];
 
-  // Pre-load hover textures
+  // 24 blobs total — originals + variants
+  const allDefs = [...blobDefs, ...variantDefs];
+
+  // Pre-load hover textures for all blobs
   const hoverSrcs = {};
-  blobDefs.forEach(([imgId]) => {
+  [...blobDefs, ...variantDefs].forEach(([imgId]) => {
     const img = document.getElementById(imgId);
     if (img) {
       hoverSrcs[imgId] = {
@@ -272,15 +288,17 @@ function initPhysics() {
   let hoveredBody = null;
 
   function jiggle(body) {
-    if (body._jiggling) return;
+    // Don't jiggle if blob is being dragged
+    if (body._jiggling || mc.body === body) return;
     body._jiggling = true;
-    const seq = [0.32, -0.36, 0.24, -0.14, 0.06, 0];
+    // Subtle twitch — much gentler amplitude
+    const seq = [0.06, -0.07, 0.04, -0.02, 0];
     let step = 0;
     const tick = () => {
       if (step < seq.length) {
         Body.setAngularVelocity(body, seq[step]);
         step++;
-        setTimeout(tick, 55);
+        setTimeout(tick, 60);
       } else {
         body._jiggling = false;
       }
