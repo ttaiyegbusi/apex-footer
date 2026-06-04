@@ -25,10 +25,10 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── Outer black canvas: exactly 1440×1024 ── */
+/* ── Outer black canvas: fills the actual browser window ── */
 html, body {
-  width: 1440px;
-  height: 1024px;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
   background: #0e0e0e;
   display: flex;
@@ -36,10 +36,19 @@ html, body {
   justify-content: center;
 }
 
+/* ── Scale wrapper: always 1440×1024, scales down to fit ── */
+.scale-root {
+  width: 1440px;
+  height: 1024px;
+  transform-origin: center center;
+  flex-shrink: 0;
+}
+
 /* ── Inner charcoal card ── */
 .footer-section {
-  width: calc(1440px - 48px);   /* 24px gap each side */
-  height: calc(1024px - 48px);  /* 24px gap top/bottom */
+  width: calc(1440px - 48px);
+  height: calc(1024px - 48px);
+  margin: 24px;
   background: #1d1d1d;
   color: #fff;
   border-radius: 20px;
@@ -47,10 +56,9 @@ html, body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
 }
 
-/* ── Content padding inside the card ── */
+/* ── Content padding ── */
 .footer-inner {
   padding: 72px 88px 0;
   flex-shrink: 0;
@@ -76,7 +84,7 @@ html, body {
 }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0);    }
+  to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeIn {
   from { opacity: 0; }

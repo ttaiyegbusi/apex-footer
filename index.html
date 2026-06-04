@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=1440" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Apex — Footer</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
 
+<div class="scale-root" id="scaleRoot">
 <footer class="footer-section">
   <div class="footer-inner">
 
@@ -41,7 +42,6 @@
           Smarter tools for modern finance teams.<br>All rights reserved.
         </p>
       </div>
-
       <div class="footer-col">
         <p class="footer-col-title">Quick Links</p>
         <ul class="footer-col-links">
@@ -51,7 +51,6 @@
           <li><a href="#" data-parent="Quick Links">Contact</a></li>
         </ul>
       </div>
-
       <div class="footer-col">
         <p class="footer-col-title">Products</p>
         <ul class="footer-col-links">
@@ -61,7 +60,6 @@
           <li><a href="#" data-parent="Products">Credit Card</a></li>
         </ul>
       </div>
-
       <div class="footer-col">
         <p class="footer-col-title">Company</p>
         <ul class="footer-col-links">
@@ -76,10 +74,9 @@
     <hr class="footer-divider anim-phase-2" />
   </div>
 
-  <!-- Zone 3: Physics canvas -->
+  <!-- Zone 3: Physics -->
   <div class="footer-physics-zone anim-phase-3" id="physicsZone">
     <canvas id="physicsCanvas"></canvas>
-    <!-- Blob images preloaded for Matter.js rendering -->
     <div class="blob-preload" aria-hidden="true">
       <img id="bimg-1"  src="./assets/blobs/blob-1.svg"  alt="" />
       <img id="bimg-2"  src="./assets/blobs/blob-2.svg"  alt="" />
@@ -96,8 +93,8 @@
     </div>
   </div>
 </footer>
+</div>
 
-<!-- Matter.js from CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 <script src="./script.js"></script>
 </body>

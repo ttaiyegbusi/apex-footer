@@ -1,5 +1,17 @@
 /* Apex Footer — script.js */
 
+/* ══════ 0. SCALE TO FIT ANY SCREEN ══════ */
+function scaleToFit() {
+  const el   = document.getElementById('scaleRoot');
+  const scaleX = window.innerWidth  / 1440;
+  const scaleY = window.innerHeight / 1024;
+  const scale  = Math.min(scaleX, scaleY);
+  el.style.transform = `scale(${scale})`;
+}
+scaleToFit();
+window.addEventListener('resize', scaleToFit);
+
+
 /* ══════ 1. LINK MORPH ══════ */
 document.querySelectorAll('.footer-col-links li a').forEach(link => {
   const original = link.textContent.trim();
@@ -14,6 +26,7 @@ document.querySelectorAll('.footer-col-links li a').forEach(link => {
   tmp.remove();
 });
 
+
 /* ══════ 2. STAGED ENTRY ══════ */
 function runPhases() {
   document.querySelectorAll('.anim-phase-1').forEach(el => el.classList.add('visible'));
@@ -26,6 +39,7 @@ function runPhases() {
   }, 1200);
 }
 runPhases();
+
 
 /* ══════ 3. PHYSICS ══════ */
 function initPhysics() {
@@ -97,8 +111,8 @@ function initPhysics() {
   });
 
   const ground    = Bodies.rectangle(W / 2, H + 25,  W + 200, 50,  { isStatic: true, render: { fillStyle: 'transparent' } });
-  const wallLeft  = Bodies.rectangle(-25,   H / 2,   50, H * 4, { isStatic: true, render: { fillStyle: 'transparent' } });
-  const wallRight = Bodies.rectangle(W + 25, H / 2,  50, H * 4, { isStatic: true, render: { fillStyle: 'transparent' } });
+  const wallLeft  = Bodies.rectangle(-25,    H / 2,  50, H * 4,    { isStatic: true, render: { fillStyle: 'transparent' } });
+  const wallRight = Bodies.rectangle(W + 25, H / 2,  50, H * 4,    { isStatic: true, render: { fillStyle: 'transparent' } });
 
   World.add(engine.world, [ground, wallLeft, wallRight]);
 
@@ -106,8 +120,12 @@ function initPhysics() {
     setTimeout(() => World.add(engine.world, body), i * 100);
   });
 
-  const mouse = Mouse.create(canvas);
-  const mc    = MouseConstraint.create(engine, {
+  // Scale mouse position to match canvas (since the whole page is CSS-scaled)
+  const scale  = parseFloat(document.getElementById('scaleRoot').style.transform.replace('scale(', '')) || 1;
+  const mouse  = Mouse.create(canvas);
+  mouse.pixelRatio = 1 / scale;
+
+  const mc = MouseConstraint.create(engine, {
     mouse,
     constraint: { stiffness: 0.18, damping: 0.1, render: { visible: false } }
   });
