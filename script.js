@@ -9,82 +9,62 @@ document.querySelectorAll('.footer-col-links li a').forEach(link => {
 
 
 
-/* ══════ 1b. ELASTIC HAND ══════ */
+/* ══════ 1b. DRAGGABLE HAND ══════ */
 (function () {
-  const wrap = document.getElementById('handWrap');
-  const img  = document.getElementById('handImg');
-  if (!wrap || !img) return;
+  const wrap   = document.getElementById('handWrap');
+  if (!wrap) return;
 
-  let isDragging  = false;
-  let startX      = 0;
-  let currentDrag = 0;
-  const MAX_PULL  = 160;   // max pixels you can drag right
+  let isDragging = false;
+  let offsetX    = 0;
+  let offsetY    = 0;
 
-  function applyStretch(dx) {
-    // Clamp to rightward only
-    dx = Math.max(0, Math.min(dx, MAX_PULL));
-    currentDrag = dx;
-
-    // Normalised 0→1
-    const t = dx / MAX_PULL;
-
-    // Stretch: scaleX grows, scaleY squishes (rubber conservation)
-    const scaleX = 1 + t * 1.4;          // stretches up to 2.4x wide
-    const scaleY = 1 - t * 0.28;         // squishes to ~72% tall
-    const skewY  = t * -6;               // slight tilt as it pulls
-    const translateX = dx * 0.55;        // moves rightward with drag
-
-    img.style.transition = 'none';
-    img.style.transform  =
-      `translateX(${translateX}px) scaleX(${scaleX}) scaleY(${scaleY}) skewY(${skewY}deg)`;
+  function startDrag(clientX, clientY) {
+    isDragging = true;
+    const rect = wrap.getBoundingClientRect();
+    offsetX    = clientX - rect.left;
+    offsetY    = clientY - rect.top;
+    wrap.style.transition = 'none';
+    wrap.style.cursor     = 'grabbing';
+    // Switch from % positioning to px so we can move freely
+    wrap.style.right  = 'auto';
+    wrap.style.bottom = 'auto';
+    wrap.style.left   = (rect.left) + 'px';
+    wrap.style.top    = (rect.top)  + 'px';
   }
 
-  function snapBack() {
-    img.classList.add('snapping');
-    img.style.transform = 'translateX(0) scaleX(1) scaleY(1) skewY(0deg)';
-    img.addEventListener('transitionend', () => {
-      img.classList.remove('snapping');
-    }, { once: true });
-    currentDrag = 0;
+  function moveDrag(clientX, clientY) {
+    if (!isDragging) return;
+    const footer = document.querySelector('.footer-section');
+    const fRect  = footer.getBoundingClientRect();
+    // Constrain within footer bounds
+    let x = clientX - offsetX - fRect.left;
+    let y = clientY - offsetY - fRect.top;
+    x = Math.max(0, Math.min(x, fRect.width  - wrap.offsetWidth));
+    y = Math.max(0, Math.min(y, fRect.height - wrap.offsetHeight));
+    wrap.style.left = x + 'px';
+    wrap.style.top  = y + 'px';
+  }
+
+  function endDrag() {
+    if (!isDragging) return;
+    isDragging        = false;
+    wrap.style.cursor = 'grab';
   }
 
   // Mouse
-  wrap.addEventListener('mousedown', e => {
-    isDragging = true;
-    startX     = e.clientX;
-    img.classList.remove('snapping');
-    e.preventDefault();
-  });
-
-  window.addEventListener('mousemove', e => {
-    if (!isDragging) return;
-    applyStretch(e.clientX - startX);
-  });
-
-  window.addEventListener('mouseup', () => {
-    if (!isDragging) return;
-    isDragging = false;
-    snapBack();
-  });
+  wrap.addEventListener('mousedown', e => { startDrag(e.clientX, e.clientY); e.preventDefault(); });
+  window.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
+  window.addEventListener('mouseup',   endDrag);
 
   // Touch
   wrap.addEventListener('touchstart', e => {
-    isDragging = true;
-    startX     = e.touches[0].clientX;
-    img.classList.remove('snapping');
+    startDrag(e.touches[0].clientX, e.touches[0].clientY);
     e.preventDefault();
   }, { passive: false });
-
   window.addEventListener('touchmove', e => {
-    if (!isDragging) return;
-    applyStretch(e.touches[0].clientX - startX);
-  });
-
-  window.addEventListener('touchend', () => {
-    if (!isDragging) return;
-    isDragging = false;
-    snapBack();
-  });
+    if (isDragging) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+  window.addEventListener('touchend', endDrag);
 })();
 
 /* ══════ 2. STAGED ENTRY ══════ */
