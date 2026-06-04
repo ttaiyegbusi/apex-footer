@@ -45,8 +45,13 @@ html, body {
   flex-direction: column;
 }
 
+/* ensure nav cols never clip their text */
+.footer-col-links li a {
+  overflow: visible !important;
+}
+
 .footer-inner {
-  padding: 5.5% 6% 0;
+  padding: 5.5% 5% 0;
   flex-shrink: 0;
 }
 
@@ -108,14 +113,11 @@ html, body {
   margin-bottom: 3.5%;
 }
 
-/* ── Zone 2: Nav Grid ──
-   Brand gets ~40% of width, each of 3 link cols gets ~20%
-   Using minmax so columns never collapse their content
-── */
+/* ── Zone 2: Nav Grid ── */
 .footer-main {
   display: grid;
-  grid-template-columns: 2fr minmax(120px, 0.8fr) minmax(140px, 0.8fr) minmax(160px, 0.8fr);
-  column-gap: 3%;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  column-gap: 2%;
   align-items: start;
   margin-bottom: 3.5%;
 }
@@ -181,12 +183,12 @@ html, body {
   font-size: clamp(11px, 0.9vw, 14px);
   color: rgba(255,255,255,0.38);
   text-decoration: none;
-  display: inline-block;
+  display: block;          /* block so it fills column width */
   position: relative;
   overflow: hidden;
   height: 1.25em;
-  vertical-align: bottom;
   white-space: nowrap;
+  max-width: 100%;
 }
 .footer-col-links li a .txt-original,
 .footer-col-links li a .txt-parent {

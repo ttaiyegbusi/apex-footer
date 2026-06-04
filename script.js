@@ -6,14 +6,7 @@ document.querySelectorAll('.footer-col-links li a').forEach(link => {
   const parent   = link.dataset.parent || '';
   link.innerHTML = `<span class="txt-original">${original}</span><span class="txt-parent">${parent}</span>`;
 
-  // Fix width to the widest of the two strings so layout doesn't shift
-  const wider = parent.length >= original.length ? parent : original;
-  const tmp = document.createElement('span');
-  tmp.style.cssText = 'position:fixed;visibility:hidden;white-space:nowrap;font-family:Inter,sans-serif;font-size:13px;font-weight:400;';
-  tmp.textContent = wider;
-  document.body.appendChild(tmp);
-  link.style.width = tmp.offsetWidth + 'px';
-  tmp.remove();
+  // width is inherited from block layout — no manual sizing needed
 });
 
 
