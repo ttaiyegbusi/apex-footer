@@ -25,16 +25,14 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── Black outer: full browser window ── */
 html, body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   background: #0e0e0e;
-  padding: 14px;              /* the black border gap — visible on all 4 sides */
+  padding: 14px;
 }
 
-/* ── Charcoal card: fills everything inside the black gap ── */
 .footer-section {
   width: 100%;
   height: 100%;
@@ -47,32 +45,34 @@ html, body {
   flex-direction: column;
 }
 
-/* ── Content padding ── */
 .footer-inner {
   padding: 6% 7% 0;
   flex-shrink: 0;
 }
 
-/* ── Phase animations ── */
+/* ── Phase animations — slow, smooth, eased ── */
 .anim-phase-1,
 .anim-phase-2,
 .anim-phase-3 {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(32px);
   will-change: transform, opacity;
 }
+
 .anim-phase-1.visible {
-  animation: fadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
+/* phase 2 delay handled in JS — animation itself is 1s */
 .anim-phase-2.visible {
-  animation: fadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 .anim-phase-3.visible {
-  animation: fadeIn 0.3s ease forwards;
+  animation: fadeIn 0.6s ease forwards;
   transform: none;
 }
+
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(28px); }
+  from { opacity: 0; transform: translateY(32px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeIn {
@@ -111,7 +111,7 @@ html, body {
   margin-bottom: 4%;
 }
 
-/* ── Zone 2: Nav Grid ── */
+/* ── Zone 2: Nav ── */
 .footer-main {
   display: grid;
   grid-template-columns: 2fr 0.6fr 0.6fr 0.6fr;
@@ -166,7 +166,7 @@ html, body {
   gap: 12px;
 }
 
-/* ── Link morph hover ── */
+/* ── Link morph ── */
 .footer-col-links li a {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
@@ -190,26 +190,12 @@ html, body {
     transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     opacity   0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.footer-col-links li a .txt-original {
-  transform: translateY(0);
-  opacity: 0.38;
-}
-.footer-col-links li a .txt-parent {
-  transform: translateY(110%);
-  opacity: 0;
-  color: rgba(255,255,255,0.9);
-  font-weight: 500;
-}
-.footer-col-links li a:hover .txt-original {
-  transform: translateY(-110%);
-  opacity: 0;
-}
-.footer-col-links li a:hover .txt-parent {
-  transform: translateY(0);
-  opacity: 1;
-}
+.footer-col-links li a .txt-original { transform: translateY(0); opacity: 0.38; }
+.footer-col-links li a .txt-parent   { transform: translateY(110%); opacity: 0; color: rgba(255,255,255,0.9); font-weight: 500; }
+.footer-col-links li a:hover .txt-original { transform: translateY(-110%); opacity: 0; }
+.footer-col-links li a:hover .txt-parent   { transform: translateY(0); opacity: 1; }
 
-/* ── Zone 3: Physics canvas ── */
+/* ── Zone 3: Physics ── */
 .footer-physics-zone {
   flex: 1;
   position: relative;
