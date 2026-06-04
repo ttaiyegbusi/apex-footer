@@ -99,13 +99,13 @@ html, body {
   color: #fff;
   flex: 1;
 }
-/* ── Draggable hand — absolute top-right ── */
+/* ── Draggable hand — sits beside CTA headline ── */
 .hand-wrap {
   position: absolute;
-  top: 5%;
-  right: 6%;
-  width: clamp(52px, 5vw, 76px);
-  height: clamp(66px, 6.4vw, 96px);
+  top: 6.5%;
+  left: clamp(520px, 48%, 720px);
+  width: clamp(52px, 5vw, 72px);
+  height: clamp(66px, 6.4vw, 92px);
   cursor: grab;
   user-select: none;
   z-index: 10;

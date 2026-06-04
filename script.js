@@ -224,8 +224,9 @@ function initPhysics() {
   World.add(engine.world, [ground, wallLeft, wallRight]);
 
   // Rain — staggered drop
+  // First wave drops, second wave falls on top
   bodies.forEach((body, i) => {
-    setTimeout(() => World.add(engine.world, body), i * 80);
+    setTimeout(() => World.add(engine.world, body), i * 75);
   });
 
   // Mouse
