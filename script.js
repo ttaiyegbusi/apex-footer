@@ -1,73 +1,56 @@
-/* ─────────────────────────────────────────
-   Apex Footer — script.js
-   Physics blobs + staged animations + link morph
-───────────────────────────────────────── */
+/* Apex Footer — script.js */
 
-/* ══════════════════════════════════════
-   1. LINK TEXT MORPH
-══════════════════════════════════════ */
+/* ══════ 1. LINK MORPH ══════ */
 document.querySelectorAll('.footer-col-links li a').forEach(link => {
   const original = link.textContent.trim();
   const parent   = link.dataset.parent || '';
-
-  link.innerHTML = `
-    <span class="txt-original">${original}</span>
-    <span class="txt-parent">${parent}</span>
-  `;
-
-  // Set link width to max of both texts to prevent layout shift
+  link.innerHTML = `<span class="txt-original">${original}</span><span class="txt-parent">${parent}</span>`;
+  // Fix width to widest of the two strings
+  const wider = parent.length >= original.length ? parent : original;
   const tmp = document.createElement('span');
-  tmp.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font:inherit;';
-  tmp.textContent = parent.length > original.length ? parent : original;
-  link.appendChild(tmp);
-  requestAnimationFrame(() => {
-    link.style.width = tmp.offsetWidth + 'px';
-    tmp.remove();
-  });
+  tmp.style.cssText = 'position:fixed;visibility:hidden;white-space:nowrap;font-family:Inter,sans-serif;font-size:13.5px;';
+  tmp.textContent = wider;
+  document.body.appendChild(tmp);
+  link.style.width = tmp.offsetWidth + 'px';
+  tmp.remove();
 });
 
 
-/* ══════════════════════════════════════
-   2. STAGED ENTRY ANIMATIONS
-══════════════════════════════════════ */
-function triggerPhases() {
-  // Phase 1 immediately
+/* ══════ 2. STAGED ENTRY ══════ */
+function runPhases() {
+  // Phase 1 — immediate
   document.querySelectorAll('.anim-phase-1').forEach(el => el.classList.add('visible'));
 
-  // Phase 2 after phase 1 finishes (~700ms)
+  // Phase 2 — after phase 1 settles
   setTimeout(() => {
     document.querySelectorAll('.anim-phase-2').forEach(el => el.classList.add('visible'));
-  }, 650);
+  }, 700);
 
-  // Phase 3 — reveal canvas zone, then drop blobs
+  // Phase 3 — show canvas zone, then drop blobs
   setTimeout(() => {
     document.querySelectorAll('.anim-phase-3').forEach(el => el.classList.add('visible'));
     initPhysics();
-  }, 1100);
+  }, 1200);
 }
 
-window.addEventListener('DOMContentLoaded', triggerPhases);
+// Fire immediately — don't wait for DOMContentLoaded since script is at bottom of body
+runPhases();
 
 
-/* ══════════════════════════════════════
-   3. MATTER.JS PHYSICS
-══════════════════════════════════════ */
+/* ══════ 3. PHYSICS ══════ */
 function initPhysics() {
-  const { Engine, Render, Runner, Bodies, Body, World, Mouse, MouseConstraint, Events, Composite } = Matter;
+  const { Engine, Render, Runner, Bodies, Body, World, Mouse, MouseConstraint } = Matter;
 
-  const zone    = document.getElementById('physicsZone');
-  const canvas  = document.getElementById('physicsCanvas');
-  const W       = zone.offsetWidth  || 1440;
-  const H       = zone.offsetHeight || 280;
+  const zone = document.getElementById('physicsZone');
+  const W    = 1440;
+  const H    = zone.offsetHeight;
 
-  canvas.width  = W;
-  canvas.height = H;
+  const canvas      = document.getElementById('physicsCanvas');
+  canvas.width      = W;
+  canvas.height     = H;
 
-  // Engine
-  const engine = Engine.create({ gravity: { y: 1.4 } });
-  const world  = engine.world;
+  const engine = Engine.create({ gravity: { y: 1.6 } });
 
-  // Renderer
   const render = Render.create({
     canvas,
     engine,
@@ -79,110 +62,71 @@ function initPhysics() {
     }
   });
 
-  // ── Blob definitions ──
   // [imgId, naturalW, naturalH, displayW]
   const blobDefs = [
     ['bimg-1',  209, 135, 160],
-    ['bimg-2',  184,  79, 155],
-    ['bimg-3',  190, 105, 162],
-    ['bimg-4',  200, 154, 155],
-    ['bimg-5',  200, 142, 168],
-    ['bimg-6',  197, 119, 168],
-    ['bimg-8',  194, 124, 162],
-    ['bimg-9',  190, 105, 165],
-    ['bimg-10', 185, 187, 158],
-    ['bimg-11', 229, 139, 188],
-    ['bimg-12', 200, 154, 158],
-    ['bimg-13', 179, 101, 162],
+    ['bimg-2',  184,  79, 152],
+    ['bimg-3',  190, 105, 160],
+    ['bimg-4',  200, 154, 152],
+    ['bimg-5',  200, 142, 165],
+    ['bimg-6',  197, 119, 165],
+    ['bimg-8',  194, 124, 160],
+    ['bimg-9',  190, 105, 162],
+    ['bimg-10', 185, 187, 155],
+    ['bimg-11', 229, 139, 185],
+    ['bimg-12', 200, 154, 155],
+    ['bimg-13', 179, 101, 158],
   ];
 
-  // Drop positions spread across the width
-  const dropX = [
-    60, 180, 310, 450, 590, 710,
-    830, 960, 1080, 1190, 1300, 1400
-  ];
+  // Spread evenly across 1440px
+  const slots = blobDefs.map((_, i) => Math.round(60 + (i * (1440 - 120) / (blobDefs.length - 1))));
 
-  const bodies = [];
-
-  blobDefs.forEach((def, i) => {
+  const bodies = blobDefs.map((def, i) => {
     const [imgId, nW, nH, dW] = def;
-    const dH    = Math.round((nH / nW) * dW);
-    const img   = document.getElementById(imgId);
-    const src   = img ? img.src : '';
+    const dH  = Math.round((nH / nW) * dW);
+    const img = document.getElementById(imgId);
+    const src = img ? img.src : '';
+    const x   = slots[i] + (Math.random() - 0.5) * 30;
+    const y   = -(dH * 1.5) - i * 60 - Math.random() * 100; // staggered above canvas
 
-    // Start above the viewport for drop effect
-    const startY = -dH - (i % 3) * 80 - Math.random() * 120;
-    const x      = dropX[i] + (Math.random() - 0.5) * 40;
-
-    const body = Bodies.rectangle(x, startY, dW * 0.82, dH * 0.72, {
-      restitution: 0.38,
-      friction:    0.6,
-      frictionAir: 0.018,
+    const body = Bodies.rectangle(x, y, dW * 0.78, dH * 0.68, {
+      restitution: 0.35,
+      friction:    0.55,
+      frictionAir: 0.015,
       density:     0.003,
       render: {
         sprite: {
-          texture:  src,
-          xScale:   dW / nW,
-          yScale:   dW / nW,
+          texture: src,
+          xScale:  dW / nW,
+          yScale:  dW / nW,
         }
-      },
-      label: imgId,
+      }
     });
-
-    Body.setAngle(body, (Math.random() - 0.5) * 0.6);
-    bodies.push(body);
+    Body.setAngle(body, (Math.random() - 0.5) * 0.5);
+    return body;
   });
 
-  // ── Boundaries ──
-  const ground    = Bodies.rectangle(W / 2, H + 25, W + 200, 50, { isStatic: true, render: { fillStyle: 'transparent' } });
-  const wallLeft  = Bodies.rectangle(-25,   H / 2,  50,  H * 3, { isStatic: true, render: { fillStyle: 'transparent' } });
-  const wallRight = Bodies.rectangle(W + 25, H / 2, 50,  H * 3, { isStatic: true, render: { fillStyle: 'transparent' } });
+  // Walls & floor
+  const ground     = Bodies.rectangle(W / 2, H + 25,  W + 200, 50, { isStatic: true, render: { fillStyle: 'transparent' } });
+  const wallLeft   = Bodies.rectangle(-25,   H / 2,   50, H * 4, { isStatic: true, render: { fillStyle: 'transparent' } });
+  const wallRight  = Bodies.rectangle(W + 25, H / 2,  50, H * 4, { isStatic: true, render: { fillStyle: 'transparent' } });
 
-  World.add(world, [...bodies, ground, wallLeft, wallRight]);
+  World.add(engine.world, [ground, wallLeft, wallRight]);
 
-  // ── Mouse interaction ──
+  // Drop blobs one by one
+  bodies.forEach((body, i) => {
+    setTimeout(() => World.add(engine.world, body), i * 100);
+  });
+
+  // Mouse drag
   const mouse = Mouse.create(canvas);
-  const mouseConstraint = MouseConstraint.create(engine, {
+  const mc    = MouseConstraint.create(engine, {
     mouse,
-    constraint: {
-      stiffness: 0.18,
-      damping:   0.1,
-      render:    { visible: false }
-    }
+    constraint: { stiffness: 0.18, damping: 0.1, render: { visible: false } }
   });
-  World.add(world, mouseConstraint);
+  World.add(engine.world, mc);
   render.mouse = mouse;
 
-  // ── Custom render: draw images manually for crisp rendering ──
-  // We override the afterRender event to stamp images
-  const ctx = canvas.getContext('2d');
-
-  Events.on(render, 'afterRender', () => {
-    // already handled by matter sprite renderer
-  });
-
-  // ── Staggered drop: delay adding bodies so they fall one by one ──
-  // Remove all, re-add with delay
-  World.remove(world, bodies);
-
-  bodies.forEach((body, i) => {
-    setTimeout(() => {
-      World.add(world, body);
-    }, i * 110);
-  });
-
-  // Run
   Render.run(render);
-  const runner = Runner.create();
-  Runner.run(runner, engine);
-
-  // ── Resize handling ──
-  window.addEventListener('resize', () => {
-    const newW = zone.offsetWidth;
-    render.canvas.width  = newW;
-    render.options.width = newW;
-    // Reposition ground
-    Body.setPosition(ground, { x: newW / 2, y: H + 25 });
-    Body.setPosition(wallRight, { x: newW + 25, y: H / 2 });
-  });
+  Runner.run(Runner.create(), engine);
 }

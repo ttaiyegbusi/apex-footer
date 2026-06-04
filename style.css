@@ -1,7 +1,3 @@
-/* ─────────────────────────────────────────
-   Apex Footer — style.css
-───────────────────────────────────────── */
-
 @font-face {
   font-family: 'Phudu';
   font-weight: 900;
@@ -31,22 +27,15 @@
 
 html, body {
   width: 1440px;
-  min-height: 1024px;
+  height: 1024px;
+  overflow: hidden;
   background: #111;
-  overflow-x: hidden;
 }
 
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 1024px;
-}
-
-/* ─── Footer ─── */
+/* ─── Footer: exact 1440×1024 ─── */
 .footer-section {
   width: 1440px;
-  min-height: 1024px;
+  height: 1024px;
   background: #1d1d1d;
   color: #fff;
   position: relative;
@@ -66,21 +55,23 @@ body {
 .anim-phase-3 {
   opacity: 0;
   transform: translateY(24px);
+  will-change: transform, opacity;
 }
 
 .anim-phase-1.visible {
-  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .anim-phase-2.visible {
-  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards;
+  animation: fadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .anim-phase-3.visible {
-  animation: fadeIn 0.4s ease 1.1s forwards;
+  animation: fadeIn 0.3s ease forwards;
+  transform: none;
 }
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0);    }
 }
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -92,7 +83,7 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 22px;
-  margin-bottom: 52px;
+  margin-bottom: 48px;
 }
 
 .footer-cta-title {
@@ -107,17 +98,17 @@ body {
 }
 
 .peace-icon {
-  width: 58px;
-  height: 58px;
+  width: 56px;
+  height: 56px;
   flex-shrink: 0;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 /* ─── Dividers ─── */
 .footer-divider {
   border: none;
   border-top: 1px dashed rgba(255,255,255,0.10);
-  margin-bottom: 52px;
+  margin-bottom: 48px;
 }
 
 /* ─── Zone 2: Nav Grid ─── */
@@ -126,7 +117,7 @@ body {
   grid-template-columns: 2fr 0.6fr 0.6fr 0.6fr;
   column-gap: 64px;
   align-items: start;
-  margin-bottom: 52px;
+  margin-bottom: 48px;
 }
 
 .footer-brand-logo {
@@ -137,8 +128,7 @@ body {
   font-weight: 500;
   font-size: 18px;
   color: #fff;
-  margin-bottom: 24px;
-  letter-spacing: -0.1px;
+  margin-bottom: 20px;
 }
 .footer-brand-logo sup {
   font-size: 9px;
@@ -146,7 +136,6 @@ body {
   position: relative;
   opacity: 0.6;
 }
-
 .apex-symbol {
   width: 22px;
   height: 22px;
@@ -156,10 +145,7 @@ body {
   gap: 3.5px;
   flex-shrink: 0;
 }
-.apex-dot {
-  background: #fff;
-  border-radius: 50%;
-}
+.apex-dot { background: #fff; border-radius: 50%; }
 
 .footer-brand-copy {
   font-family: 'Inter', sans-serif;
@@ -174,8 +160,7 @@ body {
   font-weight: 600;
   font-size: 13.5px;
   color: rgba(255,255,255,0.88);
-  margin-bottom: 20px;
-  letter-spacing: 0.05px;
+  margin-bottom: 18px;
 }
 
 .footer-col-links {
@@ -195,21 +180,20 @@ body {
   display: inline-block;
   position: relative;
   overflow: hidden;
-  height: 1.2em;
+  height: 1.25em;
   vertical-align: bottom;
 }
 
-/* Two text layers stacked */
 .footer-col-links li a .txt-original,
 .footer-col-links li a .txt-parent {
   display: block;
   position: absolute;
   top: 0; left: 0;
   white-space: nowrap;
+  line-height: 1.25em;
   transition:
-    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity   0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform, opacity;
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity   0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .footer-col-links li a .txt-original {
@@ -219,11 +203,10 @@ body {
 .footer-col-links li a .txt-parent {
   transform: translateY(110%);
   opacity: 0;
-  color: rgba(255,255,255,0.88);
+  color: rgba(255,255,255,0.9);
   font-weight: 500;
 }
 
-/* Hover: slide original up, parent in from below */
 .footer-col-links li a:hover .txt-original {
   transform: translateY(-110%);
   opacity: 0;
@@ -233,20 +216,19 @@ body {
   opacity: 1;
 }
 
-/* ─── Zone 3: Physics ─── */
+/* ─── Zone 3: Physics canvas ─── */
 .footer-physics-zone {
   flex: 1;
   position: relative;
-  min-height: 260px;
+  min-height: 0;
 }
 
 #physicsCanvas {
   display: block;
-  width: 100%;
+  position: absolute;
+  top: 0; left: 0;
+  width: 1440px;
   height: 100%;
 }
 
-/* preloaded images hidden */
-.blob-preload {
-  display: none;
-}
+.blob-preload { display: none; }
