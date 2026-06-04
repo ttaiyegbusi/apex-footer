@@ -46,11 +46,11 @@ html, body {
 }
 
 .footer-inner {
-  padding: 6% 7% 0;
+  padding: 5.5% 6% 0;
   flex-shrink: 0;
 }
 
-/* ── Phase animations — slow, smooth, eased ── */
+/* ── Phase animations ── */
 .anim-phase-1,
 .anim-phase-2,
 .anim-phase-3 {
@@ -58,19 +58,16 @@ html, body {
   transform: translateY(32px);
   will-change: transform, opacity;
 }
-
 .anim-phase-1.visible {
   animation: fadeUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
-/* phase 2 delay handled in JS — animation itself is 1s */
 .anim-phase-2.visible {
   animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 .anim-phase-3.visible {
-  animation: fadeIn 0.6s ease forwards;
+  animation: fadeIn 0.5s ease forwards;
   transform: none;
 }
-
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(32px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -85,12 +82,12 @@ html, body {
   display: flex;
   align-items: flex-start;
   gap: 2%;
-  margin-bottom: 4%;
+  margin-bottom: 3.5%;
 }
 .footer-cta-title {
   font-family: 'Phudu', 'Arial Black', sans-serif;
   font-weight: 900;
-  font-size: clamp(32px, 4vw, 58px);
+  font-size: clamp(28px, 3.6vw, 54px);
   line-height: 1.04;
   letter-spacing: 0.3px;
   text-transform: uppercase;
@@ -98,8 +95,8 @@ html, body {
   flex: 1;
 }
 .peace-icon {
-  width: clamp(40px, 4vw, 60px);
-  height: clamp(40px, 4vw, 60px);
+  width: clamp(36px, 3.6vw, 56px);
+  height: clamp(36px, 3.6vw, 56px);
   flex-shrink: 0;
   margin-top: 4px;
 }
@@ -108,16 +105,19 @@ html, body {
 .footer-divider {
   border: none;
   border-top: 1px dashed rgba(255,255,255,0.10);
-  margin-bottom: 4%;
+  margin-bottom: 3.5%;
 }
 
-/* ── Zone 2: Nav ── */
+/* ── Zone 2: Nav Grid ──
+   Brand gets ~40% of width, each of 3 link cols gets ~20%
+   Using minmax so columns never collapse their content
+── */
 .footer-main {
   display: grid;
-  grid-template-columns: 2fr 0.6fr 0.6fr 0.6fr;
-  column-gap: 4%;
+  grid-template-columns: 2fr minmax(120px, 0.8fr) minmax(140px, 0.8fr) minmax(160px, 0.8fr);
+  column-gap: 3%;
   align-items: start;
-  margin-bottom: 4%;
+  margin-bottom: 3.5%;
 }
 .footer-brand-logo {
   display: flex;
@@ -125,12 +125,12 @@ html, body {
   gap: 10px;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  font-size: clamp(14px, 1.3vw, 19px);
+  font-size: clamp(13px, 1.2vw, 18px);
   color: #fff;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .footer-brand-logo sup {
-  font-size: 9px;
+  font-size: 8px;
   top: -0.5em;
   position: relative;
   opacity: 0.6;
@@ -145,20 +145,28 @@ html, body {
   flex-shrink: 0;
 }
 .apex-dot { background: #fff; border-radius: 50%; }
+
 .footer-brand-copy {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
-  font-size: clamp(11px, 1vw, 14px);
+  font-size: clamp(11px, 0.9vw, 13px);
   line-height: 1.65;
   color: rgba(255,255,255,0.36);
 }
+
+.footer-col {
+  min-width: 0;    /* prevents grid blowout */
+}
+
 .footer-col-title {
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: clamp(11px, 1vw, 14px);
+  font-size: clamp(11px, 0.9vw, 14px);
   color: rgba(255,255,255,0.88);
   margin-bottom: 16px;
+  white-space: nowrap;
 }
+
 .footer-col-links {
   list-style: none;
   display: flex;
@@ -166,11 +174,11 @@ html, body {
   gap: 12px;
 }
 
-/* ── Link morph ── */
+/* ── Link morph hover ── */
 .footer-col-links li a {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
-  font-size: clamp(11px, 1vw, 14px);
+  font-size: clamp(11px, 0.9vw, 14px);
   color: rgba(255,255,255,0.38);
   text-decoration: none;
   display: inline-block;
@@ -178,6 +186,7 @@ html, body {
   overflow: hidden;
   height: 1.25em;
   vertical-align: bottom;
+  white-space: nowrap;
 }
 .footer-col-links li a .txt-original,
 .footer-col-links li a .txt-parent {
@@ -190,10 +199,24 @@ html, body {
     transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     opacity   0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.footer-col-links li a .txt-original { transform: translateY(0); opacity: 0.38; }
-.footer-col-links li a .txt-parent   { transform: translateY(110%); opacity: 0; color: rgba(255,255,255,0.9); font-weight: 500; }
-.footer-col-links li a:hover .txt-original { transform: translateY(-110%); opacity: 0; }
-.footer-col-links li a:hover .txt-parent   { transform: translateY(0); opacity: 1; }
+.footer-col-links li a .txt-original {
+  transform: translateY(0);
+  opacity: 0.38;
+}
+.footer-col-links li a .txt-parent {
+  transform: translateY(110%);
+  opacity: 0;
+  color: rgba(255,255,255,0.9);
+  font-weight: 500;
+}
+.footer-col-links li a:hover .txt-original {
+  transform: translateY(-110%);
+  opacity: 0;
+}
+.footer-col-links li a:hover .txt-parent {
+  transform: translateY(0);
+  opacity: 1;
+}
 
 /* ── Zone 3: Physics ── */
 .footer-physics-zone {
