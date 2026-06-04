@@ -1,11 +1,59 @@
 /* Apex Footer — script.js */
 
-/* ══════ 1. LINK MORPH ══════ */
-document.querySelectorAll('.footer-col-links li a').forEach(link => {
-  const original = link.textContent.trim();
-  const parent   = link.dataset.parent || '';
-  link.innerHTML = `<span class="txt-original">${original}</span><span class="txt-parent">${parent}</span>`;
-});
+/* ══════ 1. LINK SCRAMBLE HOVER ══════ */
+(function () {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$#@%&*!?';
+
+  function scramble(link) {
+    const original = link.dataset.original;
+    const len      = original.length;
+    const totalMs  = 420;      // total scramble duration
+    const steps    = 14;       // number of scramble frames
+    const stepMs   = totalMs / steps;
+    let   frame    = 0;
+
+    if (link._scrambleTimer) {
+      clearInterval(link._scrambleTimer);
+    }
+
+    link._scrambleTimer = setInterval(() => {
+      frame++;
+      // Progressive reveal: more chars resolve to original as frames advance
+      const resolved = Math.floor((frame / steps) * len);
+      let display = '';
+      for (let i = 0; i < len; i++) {
+        if (original[i] === ' ') {
+          display += ' ';
+        } else if (i < resolved) {
+          display += original[i];   // resolved character
+        } else {
+          display += chars[Math.floor(Math.random() * chars.length)];
+        }
+      }
+      link.textContent = display;
+
+      if (frame >= steps) {
+        clearInterval(link._scrambleTimer);
+        link.textContent = original;  // ensure final state is clean
+      }
+    }, stepMs);
+  }
+
+  function restore(link) {
+    if (link._scrambleTimer) {
+      clearInterval(link._scrambleTimer);
+    }
+    link.textContent = link.dataset.original;
+  }
+
+  document.querySelectorAll('.footer-col-links li a').forEach(link => {
+    const original = link.textContent.trim();
+    link.dataset.original = original;
+
+    link.addEventListener('mouseenter', () => scramble(link));
+    link.addEventListener('mouseleave', () => restore(link));
+  });
+})();
 
 
 

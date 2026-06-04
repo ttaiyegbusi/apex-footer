@@ -191,48 +191,20 @@ html, body {
   gap: 12px;
 }
 
-/* ── Link morph hover ── */
+/* ── Link scramble hover ── */
 .footer-col-links li a {
   font-family: 'Inter', sans-serif;
   font-weight: 400;
   font-size: clamp(11px, 0.9vw, 14px);
   color: rgba(255,255,255,0.38);
   text-decoration: none;
-  display: block;          /* block so it fills column width */
-  position: relative;
-  overflow: hidden;
-  height: 1.25em;
-  white-space: nowrap;
-  max-width: 100%;
-}
-.footer-col-links li a .txt-original,
-.footer-col-links li a .txt-parent {
   display: block;
-  position: absolute;
-  top: 0; left: 0;
   white-space: nowrap;
-  line-height: 1.25em;
-  transition:
-    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity   0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: color 0.15s ease;
+  letter-spacing: 0.01em;
 }
-.footer-col-links li a .txt-original {
-  transform: translateY(0);
-  opacity: 0.38;
-}
-.footer-col-links li a .txt-parent {
-  transform: translateY(110%);
-  opacity: 0;
-  color: rgba(255,255,255,0.9);
-  font-weight: 500;
-}
-.footer-col-links li a:hover .txt-original {
-  transform: translateY(-110%);
-  opacity: 0;
-}
-.footer-col-links li a:hover .txt-parent {
-  transform: translateY(0);
-  opacity: 1;
+.footer-col-links li a:hover {
+  color: rgba(255,255,255,0.92);
 }
 
 /* ── Zone 3: Physics ── */
